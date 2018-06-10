@@ -1,6 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 
 #Defining a Multilayer Perceptron Model
 def model(x, weights, bias):
@@ -14,11 +15,11 @@ def model(x, weights, bias):
 df = pd.read_csv("https://raw.githubusercontent.com/yoavalon/TensorflowClassification/master/patient.csv")
 df.columns = ['bp_sys', 'bp_dy', 'oxy', 'pul', 'sug', 'cri' ]
 
-train_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul']].iloc[0:1600,]
-train_Y = np.eye(5)[df[['cri']].iloc[0:1600,]].reshape(1600,5)
+train_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul']].iloc[0:9600,]
+train_Y = np.eye(5)[df[['cri']].iloc[0:9600,]].reshape(9600,5)
 
-test_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul']].iloc[1600:2000,] #.iloc[1600:2000,] #.values.reshape(-1, 1)
-test_Y = np.eye(5)[df[['cri']].iloc[1600:2000,]].reshape(399,5)
+test_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul']].iloc[9600:2000,] #.iloc[1600:2000,] #.values.reshape(-1, 1)
+test_Y = np.eye(5)[df[['cri']].iloc[9600:10000,]].reshape(399,5)
 
 
 print(train_X.shape)
@@ -30,8 +31,8 @@ print(test_Y.shape)
 
 #hyperparameter
 learning_rate = 0.01
-training_epochs = 2000
-display_steps = 200
+training_epochs = 10000
+display_steps = 50
 
 
 #Network parameters   #dimensions
@@ -64,17 +65,27 @@ optimizer = tf.train.AdamOptimizer(learning_rate).minimize(cost)
 #Initializing global variables
 init = tf.global_variables_initializer()
 
+lossList = []
+
 with tf.Session() as sess:
 	sess.run(init)
 
 	for epoch in range(training_epochs):		
-		_, c = sess.run([optimizer, cost], feed_dict={X: train_X, Y: train_Y})
+		_, c = sess.run([optimizer, cost], feed_dict={X: train_X, Y: train_Y})		
 		if(epoch + 1) % display_steps == 0:
+			lossList.append(c)
 			print("Epoch: ", (epoch+1), "Cost: ", c)
+      
 	
 	test_result = sess.run(pred, feed_dict={X: train_X})
 	correct_pred = tf.equal(tf.argmax(test_result, 1), tf.argmax(train_Y, 1))
 
 	accuracy = tf.reduce_mean(tf.cast(correct_pred, "float"))
 	print("Accuracy:", accuracy.eval({X: test_X, Y: test_Y}))
-
+  
+# plot Loss Graph
+plt.plot(lossList)
+plt.title('Loss')
+plt.ylabel('loss')
+plt.xlabel('epoch')
+plt.show()

@@ -1,13 +1,13 @@
-import tensorflow as tf
-import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+import tensorflow as tf   #deep learning Neural Networks
+import numpy as np   #number manipulation in python
+import pandas as pd   #import dataset  
+import matplotlib.pyplot as plt #plot
 
 #Defining a Multilayer Perceptron Model
 def model(x, weights, bias):
 	layer_1 = tf.add(tf.matmul(x, weights["hidden"]), bias["hidden"])
-	layer_1 = tf.nn.relu(layer_1)
-  
+	layer_1 = tf.nn.relu(layer_1) #rectified linear unit  (activation function) (inserts aspect of non linearity)
+    
 	layer_2 = tf.add(tf.matmul(layer_1, weights["hidden2"]), bias["hidden2"])
 	layer_2 = tf.nn.relu(layer_2)
   
@@ -25,12 +25,12 @@ def model(x, weights, bias):
 df = pd.read_csv("https://raw.githubusercontent.com/yoavalon/TensorflowClassification/master/patient.csv")
 df.columns = ['bp_sys', 'bp_dy', 'oxy', 'pul', 'sug', 'cri' ]
 
-#train_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul']].iloc[0:9600,]
-train_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul', 'sug']].iloc[0:9600,]
+train_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul']].iloc[0:9600,]
+#train_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul', 'sug']].iloc[0:9600,]
 train_Y = np.eye(5)[df[['cri']].iloc[0:9600,]].reshape(9600,5)
 
-#test_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul']].iloc[9600:2000,]
-test_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul', 'sug']].iloc[9600:2000,]
+test_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul']].iloc[9600:2000,]
+#test_X = df[['bp_sys', 'bp_dy', 'oxy', 'pul', 'sug']].iloc[9600:2000,]
 test_Y = np.eye(5)[df[['cri']].iloc[9600:10000,]].reshape(399,5)
 
 
@@ -48,8 +48,8 @@ display_steps = 50
 
 
 #Network parameters   #dimensions
-#n_input = 4
-n_input = 5
+n_input = 4
+#n_input = 5
 n_hidden = 10
 n_output = 5
 
@@ -110,3 +110,4 @@ plt.title('Loss')
 plt.ylabel('loss')
 plt.xlabel('epoch')
 plt.show()
+
